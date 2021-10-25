@@ -21,7 +21,6 @@ func MergeSort(a []int) []int {
 	if len(a) > 1 {
 		n := len(a) / 2
 		a = Merge(MergeSort(a[:n]), MergeSort(a[n:]))
-		fmt.Println(a)
 	}
 	return a
 }
