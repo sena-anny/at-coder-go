@@ -56,5 +56,17 @@ func main() {
 }
 
 func solve() {
+	N := customIo.GetNextInt()
+	count := 0
+	for i := 1; i < N+1; i++ {
+		if 1 <= i && i <= 9 {
+			count++
+		} else if 100 <= i && i <= 999 {
+			count++
+		} else if 10000 <= i && i <= 99999 {
+			count++
+		}
+	}
 
+	customIo.Println(count)
 }
