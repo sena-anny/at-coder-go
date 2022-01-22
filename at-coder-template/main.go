@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -46,8 +47,11 @@ func main() {
 	out := os.Stdout
 
 	if isLocal() {
-		path, _ := filepath.Abs("./input.txt")
-		in, _ = os.Open(path)
+		path, err := filepath.Abs("./input.txt")
+		in, err = os.Open(path)
+		if err != nil {
+			log.Printf("ファイル読み込み失敗:%v", err)
+		}
 	}
 
 	customIo = NewCustomIo(in, out)
