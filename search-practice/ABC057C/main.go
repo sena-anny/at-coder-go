@@ -59,10 +59,6 @@ func main() {
 	solve()
 }
 
-func solve() {
-
-}
-
 func cntDigits(n int) int {
 	digits := 0
 	for n > 0 {
@@ -71,10 +67,23 @@ func cntDigits(n int) int {
 	}
 	return digits
 }
-
 func maxInt(x int, y int) int {
 	if x >= y {
 		return x
 	}
 	return y
+}
+
+func solve() {
+	N := customIo.GetNextInt()
+	ans := cntDigits(N)
+	for i := 1; i*i <= N; i++ {
+		if N%i == 0 {
+			cur := maxInt(cntDigits(i), cntDigits(N/i))
+			if ans > cur {
+				ans = cur
+			}
+		}
+	}
+	customIo.Println(ans)
 }
