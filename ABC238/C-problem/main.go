@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -62,26 +61,18 @@ func main() {
 
 func solve() {
 	N := customIo.GetNextInt()
-	digits := cntDigits(N)
+	const M = 998244353
 
-	var total float64
-	if digits == 1 {
-		for i := 1; i < N; i++ {
-			total += float64(i)
-		}
+	ans := 0
+	for i := 1; i <= N; i *= 10 {
+		x := minInt(N, i*10-1)
+		y := x - i + 1
+		// mod Mにおける等差数列の和
+		ans += (y + 1) % M * (y % M) % M * invMod(2, M) % M
 	}
+	ans = (ans%M + M) % M
 
-	for i := 1; i < digits; i++ {
-		total += (9*math.Pow(float64(10), float64(i-1)) + 1) * (9 * math.Pow(float64(10), float64(i-1))) / 2
-	}
-
-	cnt := 1
-	for j := 1 * math.Pow(float64(10), float64(digits-1)); j <= float64(N); j++ {
-		total += float64(cnt)
-		cnt++
-	}
-	rest := int(total) % 998244353
-	customIo.Println(rest)
+	customIo.Println(ans)
 
 }
 
@@ -94,9 +85,30 @@ func cntDigits(n int) int {
 	return digits
 }
 
-func maxInt(x int, y int) int {
+func maxInt(x, y int) int {
 	if x >= y {
 		return x
 	}
 	return y
+}
+
+func minInt(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+// mod Mにおけるaの逆元を求める（非再帰拡張 Euclid の互除法）
+func invMod(a, M int) int {
+	p, x, u := M, 1, 0
+	for p != 0 {
+		t := a / p
+		a, p = p, a-t*p
+		x, u = u, x-t*u
+	}
+	if x < 0 {
+		x += M
+	}
+	return x
 }

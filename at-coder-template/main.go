@@ -72,9 +72,30 @@ func cntDigits(n int) int {
 	return digits
 }
 
-func maxInt(x int, y int) int {
+func maxInt(x, y int) int {
 	if x >= y {
 		return x
 	}
 	return y
+}
+
+func minInt(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+// mod Mにおけるaの逆元を求める（非再帰拡張 Euclid の互除法）
+func invMod(a, M int) int {
+	p, x, u := M, 1, 0
+	for p != 0 {
+		t := a / p
+		a, p = p, a-t*p
+		x, u = u, x-t*u
+	}
+	if x < 0 {
+		x += M
+	}
+	return x
 }
