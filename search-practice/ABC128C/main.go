@@ -63,15 +63,19 @@ func solve() {
 	N := customIo.GetNextInt()
 	M := customIo.GetNextInt()
 
-	var ktmp, stmp int
-	Switch := make([][]int, M)
+	var ktmp int
+	// 各電球とそれにつながるスイッチ群の関係
+	SwitchList := make([][]int, M)
+	// 電球の点灯条件
 	P := make([]int, M)
 	for i := 0; i < M; i++ {
+		// スイッチの数
 		ktmp = customIo.GetNextInt()
-		Switch[i] = make([]int, ktmp)
+		// 電球iにつながるスイッチ群
+		SwitchList[i] = make([]int, ktmp)
 		for j := 0; j < ktmp; j++ {
-			stmp = customIo.GetNextInt()
-			Switch[i][j] = 1 << (stmp - 1)
+			// 電球iにつながるスイッチjの番号
+			SwitchList[i][j] = customIo.GetNextInt()
 		}
 	}
 	for i := 0; i < M; i++ {
@@ -79,14 +83,13 @@ func solve() {
 	}
 
 	count := 0
+	// スイッチが全てオフ（00000）-全てオン（11111）の状態
 	for bits := 0; bits < 1<<N; bits++ {
 		on := true
 		for light := 0; light < M; light++ {
 			sum := 0
-			for _, state := range Switch[light] {
-				if bits&state != 0 {
-					sum++
-				}
+			for _, switchNumber := range SwitchList[light] {
+				sum += bits >> (switchNumber - 1) & 1
 			}
 			if (sum % 2) != P[light] {
 				on = false
