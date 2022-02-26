@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 )
 
@@ -98,4 +100,76 @@ func invMod(a, M int) int {
 		x += M
 	}
 	return x
+}
+
+// 順列 nPk
+func permutation(N, K int) int {
+	v := 1
+	if 0 < K && K <= N {
+		for i := 0; i < K; i++ {
+			v *= N - i
+		}
+	} else if K > N {
+		v = 0
+	}
+	return v
+}
+
+/*
+    順列全探索
+	for {
+		// Do something
+		if !nextPermutation(sort.IntSlice(x)) {
+			break
+		}
+	}
+*/
+func nextPermutation(x sort.Interface) bool {
+	n := x.Len() - 1
+	if n < 1 {
+		return false
+	}
+	j := n - 1
+	for ; !x.Less(j, j+1); j-- {
+		if j == 0 {
+			return false
+		}
+	}
+	l := n
+	for !x.Less(j, l) {
+		l--
+	}
+	x.Swap(j, l)
+	for k, l := j+1, n; k < l; {
+		x.Swap(k, l)
+		k++
+		l--
+	}
+	return true
+}
+
+// ２つのスライスの値を比較
+func equalSlice(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := 0; i < len(a); i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Point is int point
+type point struct {
+	x int
+	y int
+}
+
+// 2点(a-b)間の距離
+func pointDistance(a, b point) float64 {
+	return math.Sqrt(float64((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y)))
 }
