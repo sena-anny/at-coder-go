@@ -57,13 +57,41 @@ func main() {
 	}
 
 	customIo = NewCustomIo(in, out)
-	defer func() {
-		customIo.Writer.Flush()
-	}()
+	defer customIo.Writer.Flush()
 	solve()
 }
 
 func solve() {
+	N := customIo.GetNextInt()
+	maxH := 0
+	H := make([][2]int, N)
+	for i := 0; i < N; i++ {
+		// 初期配置
+		H[i][0] = customIo.GetNextInt()
+		// 増加量
+		H[i][1] = customIo.GetNextInt()
+		maxH = maxInt(maxH, H[i][0]+H[i][1]*(N-1))
+	}
+	// 二分探索するための関数（cが求める値より小さい場合はtrue）
+	f := func(c int) bool {
+		// 風船iを割る秒数
+		cs := make([]int, N)
+		for i := 0; i < N; i++ {
+			if c < H[i][0] {
+				return true
+			}
+			cs[i] = (c - H[i][0]) / H[i][1]
+		}
+		sort.Ints(cs)
+		for i := 0; i < N; i++ {
+			// i秒後に割れる
+			if cs[i] < i {
+				return true
+			}
+		}
+		return false
+	}
+	customIo.Println(bs(0, maxH, f) + 1)
 
 }
 
