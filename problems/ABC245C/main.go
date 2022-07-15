@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -65,15 +66,42 @@ func solve() {
 	N := customIo.GetNextInt()
 	K := customIo.GetNextInt()
 
-	A := make([]int, N)
-	B := make([]int, N)
-	for i := 0; i < N; i++ {
+	A := make([]int, N+1)
+	B := make([]int, N+1)
+	DP := make([]bool, N+1)
+	EP := make([]bool, N+1)
+	for i := 1; i < N+1; i++ {
 		A[i] = customIo.GetNextInt()
 	}
-	for i := 0; i < N; i++ {
+	for i := 1; i < N+1; i++ {
 		B[i] = customIo.GetNextInt()
 	}
 
 	// 動的計画法
+	DP[1] = true
+	EP[1] = true
 
+	for i := 2; i < N+1; i++ {
+		if DP[i-1] {
+			if math.Abs(float64(A[i]-A[i-1])) <= float64(K) {
+				DP[i] = true
+			}
+			if math.Abs(float64(B[i]-A[i-1])) <= float64(K) {
+				EP[i] = true
+			}
+		}
+		if EP[i-1] {
+			if math.Abs(float64(A[i]-B[i-1])) <= float64(K) {
+				DP[i] = true
+			}
+			if math.Abs(float64(B[i]-B[i-1])) <= float64(K) {
+				EP[i] = true
+			}
+		}
+	}
+	if DP[N] == true || EP[N] == true {
+		customIo.Println("Yes")
+	} else {
+		customIo.Println("No")
+	}
 }
