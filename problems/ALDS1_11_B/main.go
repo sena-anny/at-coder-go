@@ -66,16 +66,19 @@ func solve() {
 	n := customIo.GetNextInt()
 	g := Graph{
 		edge:         make([][]int, n+1),
-		discoverTime: make([]int, n),
-		finishTime:   make([]int, n),
+		discoverTime: make([]int, n+1),
+		finishTime:   make([]int, n+1),
 		time:         0,
+		visited:      make([]bool, n+1),
 	}
 	for i := 1; i < n+1; i++ {
 		u := customIo.GetNextInt()
 		k := customIo.GetNextInt()
-		g.edge[u] = make([]int, k+1)
-		for j := 1; j < k+1; j++ {
-			g.edge[u] = append(g.edge[u], customIo.GetNextInt())
+		//g.edge[u] = make([]int, k+1)
+		if k > 0 {
+			for j := 1; j < k+1; j++ {
+				g.edge[u] = append(g.edge[u], customIo.GetNextInt())
+			}
 		}
 	}
 
@@ -83,10 +86,14 @@ func solve() {
 	for i := range g.edge {
 		sort.Ints(g.edge[i])
 	}
-
-	g.dfs(1)
+	for i := 1; i <= n; i++ {
+		if g.visited[i] == true {
+			continue
+		}
+		g.dfs(i)
+	}
 	for i := 1; i < n+1; i++ {
-		customIo.Printf("%d %d %d", i, g.discoverTime[i], g.finishTime[i])
+		customIo.Printf("%d %d %d\n", i, g.discoverTime[i], g.finishTime[i])
 	}
 
 }
@@ -99,17 +106,23 @@ type Graph struct {
 	finishTime []int
 	// 現在時刻
 	time int
+	// 訪問済み頂点
+	visited []bool
 }
 
 // DFS
-func (g Graph) dfs(now int) {
+func (g *Graph) dfs(now int) {
+	g.visited[now] = true
 	g.time++
 	g.discoverTime[now] = g.time
 
-	for i := range g.edge[now] {
-		if g.discoverTime[i] == 0 {
-			g.dfs(i)
+	for _, v := range g.edge[now] {
+		if g.discoverTime[v] == 0 {
+			g.dfs(v)
+		} else {
+			continue
 		}
-		g.finishTime[now] = g.time
 	}
+	g.time++
+	g.finishTime[now] = g.time
 }
