@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sort"
 	"strconv"
 )
 
@@ -63,65 +62,42 @@ func main() {
 }
 
 func solve() {
-	n := customIo.GetNextInt()
-	g := Graph{
-		edge:         make([][]int, n+1),
-		discoverTime: make([]int, n+1),
-		finishTime:   make([]int, n+1),
-		time:         0,
-		visited:      make([]bool, n+1),
-	}
-	for i := 1; i < n+1; i++ {
-		u := customIo.GetNextInt()
-		k := customIo.GetNextInt()
-		if k > 0 {
-			for j := 1; j < k+1; j++ {
-				g.edge[u] = append(g.edge[u], customIo.GetNextInt())
-			}
-		}
-	}
+	N := customIo.GetNextInt()
+	X := customIo.GetNextInt()
+	Y := customIo.GetNextInt()
 
-	// 頂点番号の小さい順に訪問する
-	for i := range g.edge {
-		sort.Ints(g.edge[i])
-	}
-	for i := 1; i <= n; i++ {
-		if g.visited[i] == true {
-			continue
-		}
-		g.dfs(i)
-	}
-	for i := 1; i < n+1; i++ {
-		customIo.Printf("%d %d %d\n", i, g.discoverTime[i], g.finishTime[i])
-	}
-
+	j := &jewel{red: make([]int, N+1), blue: make([]int, N+1), X: X, Y: Y}
+	j.changeRed(N)
+	customIo.Println(j.blue[1])
 }
 
-type Graph struct {
-	edge [][]int
-	// 頂点の発見時刻 初期値0
-	discoverTime []int
-	// 頂点の探索完了時刻 初期値0
-	finishTime []int
-	// 現在時刻
-	time int
-	// 訪問済み頂点
-	visited []bool
+type jewel struct {
+	red  []int
+	blue []int
+	X    int
+	Y    int
 }
 
-// DFS
-func (g *Graph) dfs(now int) {
-	g.visited[now] = true
-	g.time++
-	g.discoverTime[now] = g.time
-
-	for _, v := range g.edge[now] {
-		if g.discoverTime[v] == 0 {
-			g.dfs(v)
-		} else {
-			continue
-		}
+func (j *jewel) changeRed(level int) {
+	if level-1 == 0 {
+		return
 	}
-	g.time++
-	g.finishTime[now] = g.time
+	j.red[level-1] += 1
+	j.blue[level] += j.X
+	j.changeRed(level - 1)
+	for i := 0; i < j.X; i++ {
+		j.changeBlue(level)
+	}
+}
+
+func (j *jewel) changeBlue(level int) {
+	if level-1 == 0 {
+		return
+	}
+	j.red[level-1] += 1
+	j.blue[level-1] += j.Y
+	j.changeRed(level - 1)
+	for i := 0; i < j.Y; i++ {
+		j.changeBlue(level - 1)
+	}
 }
