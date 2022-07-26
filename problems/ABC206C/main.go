@@ -66,38 +66,16 @@ func solve() {
 	X := customIo.GetNextInt()
 	Y := customIo.GetNextInt()
 
-	j := &jewel{red: make([]int, N+1), blue: make([]int, N+1), X: X, Y: Y}
-	j.changeRed(N)
-	customIo.Println(j.blue[1])
-}
+	R := make([]int, N+2)
+	B := make([]int, N+2)
 
-type jewel struct {
-	red  []int
-	blue []int
-	X    int
-	Y    int
-}
+	R[1] = 0
+	B[1] = 1
 
-func (j *jewel) changeRed(level int) {
-	if level-1 == 0 {
-		return
+	for i := 2; i <= N; i++ {
+		B[i] = R[i-1] + Y*B[i-1]
+		R[i] = R[i-1] + X*B[i]
 	}
-	j.red[level-1] += 1
-	j.blue[level] += j.X
-	j.changeRed(level - 1)
-	for i := 0; i < j.X; i++ {
-		j.changeBlue(level)
-	}
-}
 
-func (j *jewel) changeBlue(level int) {
-	if level-1 == 0 {
-		return
-	}
-	j.red[level-1] += 1
-	j.blue[level-1] += j.Y
-	j.changeRed(level - 1)
-	for i := 0; i < j.Y; i++ {
-		j.changeBlue(level - 1)
-	}
+	customIo.Println(R[N])
 }
